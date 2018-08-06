@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/json-formatter/0.7.0/json-formatter.min.css" integrity="sha256-f+uWA1e4T9wJxyy2jVndIohpOGdGKDBWee1iqtxFv50=" crossorigin="anonymous" />
+    <style>
+        .icon {
+            width: 34px;
+            height: 34px;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/json-formatter/0.7.0/json-formatter.min.js" integrity="sha256-rz4zpMyR7zixjdwYEHs8inQ18rNZK0qJt5TN/UvKuQA=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        (function ($) {
+            $(function () {
+                $('.collapse').collapse();
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="bg-dark text-white py-4 mb-5">
+        <div class="container">
+            <h1>
+                <i class="far fa-check-square mr-2"></i>
+                Site audit {{ site }}
+            </h1>
+        </div>
+    </div>
+    <div class="container">
+        <ul class="list-unstyled">
+            {% for url, urlAudits in audits %}
+                <li>
+                    <div class="my-3">
+                        <a class="text-dark" href="{{ url }}" target="_blank">
+                            <i class="fas fa-link mr-2"></i> {{ url }}
+                        </a>
+                        {% if urlAudits|length == 0 %}
+                            <i class="ml-2 fas fa-check-circle text-success"></i>
+                        {% endif %}
+                    </div>
+                    {% if urlAudits|length > 0 %}
+                        <ul class="list-unstyled">
+                            {% for urlAuditKey, urlAudit in urlAudits %}
+                                <li class="my-2 audit">
+                                    {% if urlAudit.resolution == 'warning' %}
+                                        <i class="icon rounded-circle bg-dark p-2 fas fa-exclamation-triangle text-warning"></i>
+                                    {% elseif urlAudit.resolution == 'error' %}
+                                        <i class="icon rounded-circle bg-danger p-2 fas fa-exclamation-circle text-white"></i>
+                                    {% endif %}
+                                    <strong>{{ urlAudit.name }}:</strong>
+                                    <span class="text-muted">{{ urlAudit.message }}</span>
+                                    <a class="btn btn-primary btn-sm rounded-circle float-right" data-toggle="collapse" href="#info-{{ url|md5 }}-{{ urlAuditKey }}" role="button" aria-expanded="false">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <div class="collapse show" id="info-{{ url|md5 }}-{{ urlAuditKey }}">
+                                        <pre class="collapse pre-scrollable bg-dark text-white p-3 mt-2">{{ urlAudit.data|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <hr/>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
