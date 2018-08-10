@@ -7,12 +7,15 @@ namespace Webduck\Console\Command;
 use GuzzleHttp\Client;
 use Siteqa\Test\Domain\Model\HttpSuite;
 use Siteqa\Test\Domain\Model\Uri;
+use Siteqa\Test\Event\CrawlerUriQueuedEvent;
+use Siteqa\Test\Event\SymfonyEventDispatcher;
 use Siteqa\Test\Provider\CrawlerResultProvider;
 use Siteqa\Test\Provider\HttpSuiteProvider;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Twig\Environment;
 use Webduck\Audit\AuditInterface;
 use Webduck\Audit\AuditResultCollection;
@@ -39,10 +42,18 @@ class SiteAuditCommand extends AbstractAuditCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $dispatcher = new SymfonyEventDispatcher(new EventDispatcher());
+        $dispatcher->addListener(CrawlerUriQueuedEvent::NAME, function ($event) use ($output) {
+            $output->writeln(sprintf('<comment>Queued uri %s</comment>', $event->getUri()->__toString()));
+        });
+
         /** @var Uri[] $crawlerUrls */
         $crawlerUrls = array_map(Uri::class.'::createFromString', $input->getArgument('url'));
         $allowedHosts = array_unique(array_map(function (Uri $uri) { return $uri->getHost(); }, $crawlerUrls));
-        $crawler = new CrawlerResultProvider(new HttpSuiteProvider(new Client()));
+        $httpSuiteProvider = new HttpSuiteProvider(new Client());
+        $httpSuiteProvider->setEventDispatcher($dispatcher);
+        $crawler = new CrawlerResultProvider($httpSuiteProvider);
+        $crawler->setEventDispatcher($dispatcher);
         $crawler->setRecursive(true);
 
         foreach ($input->getOption('url-filter') as $regex) {
