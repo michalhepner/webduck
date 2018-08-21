@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace Webduck\Provider;
 
-use Heo\ParallelProcess\AsyncRunner;
-use Heo\ParallelProcess\EmitterRunner;
+use NunuSoftware\ParallelProcess\AsyncRunner;
+use NunuSoftware\ParallelProcess\EmitterRunner;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 

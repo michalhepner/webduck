@@ -125,6 +125,9 @@
     "marcj/topsort": {
         "version": "1.1.0"
     },
+    "nunu-software/parallel-process": {
+        "version": "1.0.0"
+    },
     "paragonie/random_compat": {
         "version": "v9.99.99"
     },

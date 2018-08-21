@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "39e1f503d4cbb86768b1eefcfc549adf",
+    "content-hash": "0ae4245fded5b80b9136ee011345e253",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2149,6 +2149,40 @@
                 "topsort"
             ],
             "time": "2016-11-19T14:58:11+00:00"
+        },
+        {
+            "name": "nunu-software/parallel-process",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nunu-software/parallel-process.git",
+                "reference": "f96617031935bfca9935b9d9309eff59e7ce29b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nunu-software/parallel-process/zipball/f96617031935bfca9935b9d9309eff59e7ce29b4",
+                "reference": "f96617031935bfca9935b9d9309eff59e7ce29b4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9",
+                "symfony/process": ">=2.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NunuSoftware\\ParallelProcess\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Michał Hepner",
+                    "email": "mhepner@nunu-software.pl"
+                }
+            ],
+            "description": "Allows to run Symfony processes in parallel",
+            "time": "2018-08-20T14:03:20+00:00"
         },
         {
             "name": "paragonie/random_compat",
