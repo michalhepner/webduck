@@ -58,9 +58,11 @@ class SitemapAuditCommand extends AbstractAuditCommand
         $urlIndex = 0;
 
         $resultAudits = [];
+        $screenshots = [];
+
         (new DataBundleProvider($providerBin, $urls))
             ->setPoolSize($input->getOption('pool-size'))
-            ->emit(function (DataBundle $bundle) use ($output, $audits, $urls, &$urlIndex, &$resultAudits) {
+            ->emit(function (DataBundle $bundle) use ($output, $audits, $urls, &$urlIndex, &$resultAudits, &$screenshots) {
                 $urlIndex++;
 
                 /** @var UrlData $urlData */
@@ -81,6 +83,7 @@ class SitemapAuditCommand extends AbstractAuditCommand
                     $helper->render();
 
                     $resultAudits[$urlData->getUrl()] = $auditResults;
+                    $screenshots[$urlData->getUrl()] = $urlData->getScreenshot();
                 }
             })
         ;
@@ -90,6 +93,7 @@ class SitemapAuditCommand extends AbstractAuditCommand
             $auditHtml = $twig->render('audit.html.twig', [
                 'site' => $sitemapUrl->getHost(),
                 'audits' => $resultAudits,
+                'screenshots' => $screenshots
             ]);
 
             file_put_contents($htmlPath, $auditHtml);

@@ -39,6 +39,8 @@ class PageAuditCommand extends AbstractAuditCommand
         $audits = $this->getAudits($input);
 
         $resultAudits = [];
+        $screenshots = [];
+
         $urlIndex = 0;
         /** @var UrlData $urlData */
         foreach ($urlDataCollection as $urlData) {
@@ -59,6 +61,7 @@ class PageAuditCommand extends AbstractAuditCommand
             $helper->render();
 
             $resultAudits[$urlData->getUrl()] = $auditResults;
+            $screenshots[$urlData->getUrl()] = $urlData->getScreenshot();
         }
 
         if ($htmlPath = $input->getOption('save-html')) {
@@ -66,6 +69,7 @@ class PageAuditCommand extends AbstractAuditCommand
             $auditHtml = $twig->render('audit.html.twig', [
                 'site' => $urls[0]->getHost(),
                 'audits' => $resultAudits,
+                'screenshots' => $screenshots,
             ]);
 
             file_put_contents($htmlPath, $auditHtml);

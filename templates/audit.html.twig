@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/json-formatter/0.7.0/json-formatter.min.css" integrity="sha256-f+uWA1e4T9wJxyy2jVndIohpOGdGKDBWee1iqtxFv50=" crossorigin="anonymous" />
     <style>
@@ -16,7 +16,7 @@
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/json-formatter/0.7.0/json-formatter.min.js" integrity="sha256-rz4zpMyR7zixjdwYEHs8inQ18rNZK0qJt5TN/UvKuQA=" crossorigin="anonymous"></script>
     <script type="text/javascript">
         (function ($) {
@@ -40,22 +40,35 @@
         <ul class="list-unstyled">
             {% for url, urlAudits in audits %}
                 <li>
-                    <div class="my-3">
-                        <a class="text-dark" href="{{ url }}" target="_blank">
-                            <i class="fas fa-link mr-2"></i> {{ url }}
+                    <div class="p-3 mb-3 bg-light border shadow-sm">
+                        {% if screenshots[url] %}
+                            <a class="btn btn-success btn-sm rounded-circle mr-1" data-toggle="collapse" href="#screenshot-{{ url|md5 }}" role="button" aria-expanded="false">
+                                <i class="fas fa-image"></i>
+                            </a>
+                        {% endif %}
+                        <a href="{{ url }}" target="_blank">
+                            <span class="btn btn-secondary btn-sm rounded-circle mr-1">
+                                <i class="fas fa-link"></i>
+                            </span>
+                            <span class="text-dark">{{ url }}</span>
                         </a>
                         {% if urlAudits|length == 0 %}
                             <i class="ml-2 fas fa-check-circle text-success"></i>
                         {% endif %}
                     </div>
+                    {% if screenshots[url] %}
+                        <div class="collapse show" id="screenshot-{{ url|md5 }}">
+                            <img class="my-2 img-fluid" src="data:image/jpeg;base64,{{ screenshots[url] }}"/>
+                        </div>
+                    {% endif %}
                     {% if urlAudits|length > 0 %}
                         <ul class="list-unstyled">
                             {% for urlAuditKey, urlAudit in urlAudits %}
                                 <li class="my-2 audit">
                                     {% if urlAudit.resolution == 'warning' %}
-                                        <i class="icon rounded-circle bg-dark p-2 fas fa-exclamation-triangle text-warning"></i>
+                                        <i class="small bg-dark p-2 fas fa-exclamation-triangle text-warning"></i>
                                     {% elseif urlAudit.resolution == 'error' %}
-                                        <i class="icon rounded-circle bg-danger p-2 fas fa-exclamation-circle text-white"></i>
+                                        <i class="small bg-danger p-2 fas fa-exclamation-circle text-white"></i>
                                     {% endif %}
                                     <strong>{{ urlAudit.name }}:</strong>
                                     <span class="text-muted">{{ urlAudit.message }}</span>
@@ -69,7 +82,6 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    <hr/>
                 </li>
             {% endfor %}
         </ul>

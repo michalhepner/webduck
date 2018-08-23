@@ -11,6 +11,7 @@ module.exports = class {
 
   static action(url, otherUrls, options) {
     let trace = tmp.fileSync();
+    let screenshot = tmp.fileSync();
     let urls = _.union([url], otherUrls || []);
     let output = {};
 
@@ -33,7 +34,8 @@ module.exports = class {
 
           await page.tracing.start({ path: trace.name, screenshots: true });
 
-          await page.goto(url, {"waitUntil" : "networkidle2"});
+          await page.goto(url, { waitUntil : "networkidle2", timeout: 30000 });
+          await page.screenshot({ path: screenshot.name, fullPage: true, type: "jpeg", encoding: "base64" });
 
           await cdpEventObserver.stop();
 
@@ -42,6 +44,7 @@ module.exports = class {
           await page.tracing.stop();
 
           crawledUrlOutput.trace = JSON.parse(fs.readFileSync(trace.name, 'utf-8'));
+          crawledUrlOutput.screenshot = fs.readFileSync(screenshot.name, 'utf-8');
 
           trace.removeCallback();
 

@@ -21,11 +21,17 @@ class UrlData
      */
     protected $trace;
 
-    public function __construct(string $url, EventCollection $events, array $trace)
+    /**
+     * @var string|null
+     */
+    protected $screenshot;
+
+    public function __construct(string $url, EventCollection $events, array $trace, ?string $screenshot = null)
     {
         $this->url = $url;
         $this->events = $events;
         $this->trace = $trace;
+        $this->screenshot = $screenshot;
     }
 
     public static function createFromArray(string $url, array $data): self
@@ -40,7 +46,8 @@ class UrlData
                     $data['events']
                 )
             ),
-            $data['trace']
+            $data['trace'],
+            array_key_exists('screenshot', $data) ? $data['screenshot'] : null
         );
     }
 
@@ -57,5 +64,10 @@ class UrlData
     public function getTrace(): array
     {
         return $this->trace;
+    }
+
+    public function getScreenshot(): ?string
+    {
+        return $this->screenshot;
     }
 }
