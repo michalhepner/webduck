@@ -56,9 +56,13 @@ class SiteAuditCommand extends AbstractAuditCommand
         $crawler->setEventDispatcher($dispatcher);
         $crawler->setRecursive(true);
 
-        foreach ($input->getOption('url-filter') as $regex) {
+        $urlFilters = array_merge($input->getOption('url-filter'), [
+            '.*\.(pdf|jpg|jpeg|gif|png)'
+        ]);
+
+        foreach ($urlFilters as $regex) {
             $crawler->addUriFilter(function (Uri $uri) use ($regex) {
-                return !preg_match('/'.$regex.'/', $uri->__toString());
+                return !preg_match('/'.$regex.'/i', $uri->__toString());
             });
         }
 
