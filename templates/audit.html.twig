@@ -28,9 +28,9 @@
 {% endblock %}
 
 {% block body %}
-    <div class="bg-dark text-white py-4 mb-5">
+    <div class="bg-dark text-white py-4 mb-4 sticky-top">
         <div class="container">
-            <h1>
+            <h1 class="h4 mb-0">
                 <i class="far fa-check-square mr-2"></i>
                 Site audit {{ site }}
             </h1>
@@ -39,10 +39,10 @@
     <div class="container">
         <ul class="list-unstyled">
             {% for url, urlAudits in audits %}
-                <li>
-                    <div class="p-3 mb-3 bg-light border shadow-sm">
+                <li class="my-3">
+                    <div class="p-3 bg-light border shadow-sm">
                         {% if screenshots[url] %}
-                            <a class="btn btn-success btn-sm rounded-circle mr-1" data-toggle="collapse" href="#screenshot-{{ url|md5 }}" role="button" aria-expanded="false">
+                            <a class="btn btn-secondary btn-sm rounded-circle mr-1" data-toggle="collapse" href="#screenshot-{{ url|md5 }}" role="button" aria-expanded="false">
                                 <i class="fas fa-image"></i>
                             </a>
                         {% endif %}
@@ -56,31 +56,32 @@
                             <i class="ml-2 fas fa-check-circle text-success"></i>
                         {% endif %}
                     </div>
-                    {% if screenshots[url] %}
-                        <div class="collapse show" id="screenshot-{{ url|md5 }}">
-                            <img class="my-2 img-fluid" src="data:image/jpeg;base64,{{ screenshots[url] }}"/>
-                        </div>
-                    {% endif %}
                     {% if urlAudits|length > 0 %}
-                        <ul class="list-unstyled bg-white p-3 my-3 border shadow-sm">
+                        <ul class="list-unstyled bg-white p-3 border-left border-right border-bottom shadow-sm">
                             {% for urlAuditKey, urlAudit in urlAudits %}
                                 <li class="my-2 audit">
                                     {% if urlAudit.resolution == 'warning' %}
-                                        <i class="small bg-dark p-2 fas fa-exclamation-triangle text-warning"></i>
+                                        <i class="small bg-dark p-2 mr-2 fas fa-exclamation-triangle text-warning float-left"></i>
                                     {% elseif urlAudit.resolution == 'error' %}
-                                        <i class="small bg-danger p-2 fas fa-exclamation-circle text-white"></i>
+                                        <i class="small bg-danger p-2 mr-2 fas fa-exclamation-circle text-white float-left"></i>
                                     {% endif %}
-                                    <strong>{{ urlAudit.name }}:</strong>
-                                    <span class="text-muted">{{ urlAudit.message }}</span>
-                                    <a class="btn btn-primary btn-sm rounded-circle float-right" data-toggle="collapse" href="#info-{{ url|md5 }}-{{ urlAuditKey }}" role="button" aria-expanded="false">
+                                    <a class="btn btn-primary btn-sm rounded-circle float-right ml-2" data-toggle="collapse" href="#info-{{ url|md5 }}-{{ urlAuditKey }}" role="button" aria-expanded="false">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
+                                    <strong>{{ urlAudit.name }}:</strong>
+                                    <span class="text-muted">{{ urlAudit.message }}</span>
+
                                     <div class="collapse show" id="info-{{ url|md5 }}-{{ urlAuditKey }}">
                                         <pre class="collapse pre-scrollable bg-dark text-white p-3 mt-2">{{ urlAudit.data|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
                                     </div>
                                 </li>
                             {% endfor %}
                         </ul>
+                    {% endif %}
+                    {% if screenshots[url] %}
+                        <div class="collapse show" id="screenshot-{{ url|md5 }}">
+                            <img class="my-2 img-fluid" src="data:image/jpeg;base64,{{ screenshots[url] }}"/>
+                        </div>
                     {% endif %}
                 </li>
             {% endfor %}
