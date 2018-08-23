@@ -64,6 +64,8 @@ class PageAuditCommand extends AbstractAuditCommand
             $screenshots[$urlData->getUrl()] = $urlData->getScreenshot();
         }
 
+        ksort($resultAudits);
+
         if ($htmlPath = $input->getOption('save-html')) {
             $twig = $this->getContainer()->get('twig');
             $auditHtml = $twig->render('audit.html.twig', [

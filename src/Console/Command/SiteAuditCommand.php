@@ -112,6 +112,8 @@ class SiteAuditCommand extends AbstractAuditCommand
             })
         ;
 
+        ksort($resultAudits);
+
         if ($htmlPath = $input->getOption('save-html')) {
             /** @var Environment $twig */
             $twig = $this->getContainer()->get('twig');

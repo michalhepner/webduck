@@ -88,6 +88,8 @@ class SitemapAuditCommand extends AbstractAuditCommand
             })
         ;
 
+        ksort($resultAudits);
+
         if ($htmlPath = $input->getOption('save-html')) {
             $twig = $this->getContainer()->get('twig');
             $auditHtml = $twig->render('audit.html.twig', [
