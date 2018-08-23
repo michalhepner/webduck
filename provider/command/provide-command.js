@@ -32,10 +32,18 @@ module.exports = class {
           const cdpEventObserver = CdpEventObserverFactory.create(cdp);
           await cdpEventObserver.start();
 
+          const viewport = Object.assign(page.viewport(), {width: 1366});
+          await page.setViewport(viewport);
           await page.tracing.start({ path: trace.name, screenshots: true });
 
           await page.goto(url, { waitUntil : "networkidle2", timeout: 30000 });
-          await page.screenshot({ path: screenshot.name, fullPage: true, type: "jpeg", encoding: "base64" });
+          await page.screenshot({
+            path: screenshot.name,
+            fullPage: true,
+            type: "jpeg",
+            quality: 50,
+            encoding: "base64"
+          });
 
           await cdpEventObserver.stop();
 
