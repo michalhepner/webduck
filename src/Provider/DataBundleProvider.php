@@ -37,7 +37,7 @@ class DataBundleProvider
     {
         $processes = [];
         foreach ($this->urls as $url) {
-            $process = new Process(sprintf('%s provide %s', $this->bin, $url));
+            $process = new Process(sprintf('%s provide %s', $this->bin, escapeshellarg($url)));
             $process->setTimeout(0);
 
             $processes[$url] = $process;
@@ -59,7 +59,7 @@ class DataBundleProvider
     {
         $processes = [];
         foreach ($this->urls as $url) {
-            $process = new Process(sprintf('%s provide %s', $this->bin, $url));
+            $process = new Process(sprintf('%s provide %s', $this->bin, escapeshellarg($url)));
             $process->setTimeout(0);
 
             $processes[$url] = $process;
@@ -83,8 +83,11 @@ class DataBundleProvider
 
         $providerData = json_decode($process->getOutput(), true);
 
-        if ($providerData === false) {
-            throw new RuntimeException('Failed to parse provider process output');
+        if ($providerData === false || $providerData === null) {
+            throw new RuntimeException(sprintf(
+                'Failed to parse provider process output for command "%s"',
+                $process->getCommandLine()
+            ));
         }
 
         return new DataBundle(UrlDataCollection::createFromArray($providerData));
