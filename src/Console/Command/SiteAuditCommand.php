@@ -49,6 +49,12 @@ class SiteAuditCommand extends AbstractAuditCommand
 
         /** @var Uri[] $crawlerUrls */
         $crawlerUrls = array_map(Uri::class.'::createFromString', $input->getArgument('url'));
+        if (!empty($input->getOption('user')) && !empty($input->getOption('password'))) {
+            foreach ($crawlerUrls as $key => $crawlerUrl) {
+                $crawlerUrls[$key] = $crawlerUrl->withUserInfo($input->getOption('user'), $input->getOption('password'));
+            }
+        }
+
         $allowedHosts = array_unique(array_map(function (Uri $uri) { return $uri->getHost(); }, $crawlerUrls));
         $httpSuiteProvider = new HttpSuiteProvider(new Client());
         $httpSuiteProvider->setEventDispatcher($dispatcher);
@@ -86,6 +92,8 @@ class SiteAuditCommand extends AbstractAuditCommand
 
         (new DataBundleProvider($providerBin, $urls))
             ->setPoolSize($input->getOption('pool-size'))
+            ->setUser($input->getOption('user'))
+            ->setPassword($input->getOption('password'))
             ->emit(function (DataBundle $bundle) use ($output, $audits, $urls, &$urlIndex, &$resultAudits, &$screenshots) {
                 $urlIndex++;
 

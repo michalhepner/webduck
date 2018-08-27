@@ -23,6 +23,8 @@ abstract class AbstractAuditCommand extends ContainerAwareCommand
         $this
             ->addOption('audit-violations', null, InputOption::VALUE_NONE)
             ->addOption('audit-resource-load', null, InputOption::VALUE_NONE)
+            ->addOption('user', 'u', InputOption::VALUE_REQUIRED)
+            ->addOption('password', 'p', InputOption::VALUE_REQUIRED)
         ;
     }
 

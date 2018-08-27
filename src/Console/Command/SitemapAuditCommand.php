@@ -62,6 +62,8 @@ class SitemapAuditCommand extends AbstractAuditCommand
 
         (new DataBundleProvider($providerBin, $urls))
             ->setPoolSize($input->getOption('pool-size'))
+            ->setUser($input->getOption('user'))
+            ->setPassword($input->getOption('password'))
             ->emit(function (DataBundle $bundle) use ($output, $audits, $urls, &$urlIndex, &$resultAudits, &$screenshots) {
                 $urlIndex++;
 

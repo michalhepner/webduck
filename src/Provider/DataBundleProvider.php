@@ -26,6 +26,16 @@ class DataBundleProvider
      */
     protected $poolSize = 5;
 
+    /**
+     * @var string|null
+     */
+    protected $user;
+
+    /**
+     * @var string|null
+     */
+    protected $password;
+
     public function __construct(string $bin, array $urls, ?int $poolSize = null)
     {
         $this->bin = $bin;
@@ -37,7 +47,7 @@ class DataBundleProvider
     {
         $processes = [];
         foreach ($this->urls as $url) {
-            $process = new Process(sprintf('%s provide %s', $this->bin, escapeshellarg($url)));
+            $process = new Process($this->getProcessCommandLine($url));
             $process->setTimeout(0);
 
             $processes[$url] = $process;
@@ -59,7 +69,7 @@ class DataBundleProvider
     {
         $processes = [];
         foreach ($this->urls as $url) {
-            $process = new Process(sprintf('%s provide %s', $this->bin, escapeshellarg($url)));
+            $process = new Process($this->getProcessCommandLine($url));
             $process->setTimeout(0);
 
             $processes[$url] = $process;
@@ -70,6 +80,17 @@ class DataBundleProvider
         $runner->run(function (Process $process) use ($onDataBundle) {
             $onDataBundle($this->getDataBundle($process));
         });
+    }
+
+    protected function getProcessCommandLine(string $url): string
+    {
+        return implode(' ', array_filter([
+            $this->bin,
+            'provide',
+            $this->user ? '--username='.escapeshellarg($this->user) : null,
+            $this->password ? '--password='.escapeshellarg($this->password) : null,
+            escapeshellarg($url)
+        ]));
     }
 
     protected function getDataBundle(Process $process): DataBundle
@@ -101,6 +122,30 @@ class DataBundleProvider
     public function setPoolSize(int $poolSize): self
     {
         $this->poolSize = $poolSize;
+
+        return $this;
+    }
+
+    public function getUser(): ?string
+    {
+        return $this->user;
+    }
+
+    public function setUser(?string $user): self
+    {
+        $this->user = trim((string) $user) !== '' ? $user : null;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = trim((string) $password) !== '' ? $password : null;
 
         return $this;
     }

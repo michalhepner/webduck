@@ -34,6 +34,9 @@ class PageAuditCommand extends AbstractAuditCommand
         $urls = array_map(Uri::class.'::createFromString', $input->getArgument('url'));
         $providerBin = $this->getContainer()->getParameter('bin.provider');
         $provider = new DataBundleProvider($providerBin, array_map(function (Uri $uri) { return $uri->__toString(); }, $urls));
+        $provider->setUser($input->getOption('user'));
+        $provider->setPassword($input->getOption('password'));
+
         $urlDataCollection = $provider->provide()->getUrlDataCollection();
 
         $audits = $this->getAudits($input);
