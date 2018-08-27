@@ -41,6 +41,11 @@
             {% for url, urlAudits in audits %}
                 <li class="my-3">
                     <div class="p-3 bg-light border shadow-sm">
+                        {% if urlAudits|length == 0 %}
+                            <span class="mr-1 btn btn-sm rounded-circle btn-success">
+                                <i class="fas fa-check-circle"></i>
+                            </span>
+                        {% endif %}
                         {% if screenshots[url] %}
                             <a class="btn btn-secondary btn-sm rounded-circle mr-1" data-toggle="collapse" href="#screenshot-{{ url|md5 }}" role="button" aria-expanded="false">
                                 <i class="fas fa-image"></i>
@@ -52,9 +57,6 @@
                             </span>
                             <span class="text-dark">{{ url }}</span>
                         </a>
-                        {% if urlAudits|length == 0 %}
-                            <i class="ml-2 fas fa-check-circle text-success"></i>
-                        {% endif %}
                     </div>
                     {% if urlAudits|length > 0 %}
                         <ul class="list-unstyled bg-white p-3 border-left border-right border-bottom shadow-sm">
