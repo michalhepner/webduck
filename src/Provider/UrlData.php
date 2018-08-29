@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Webduck\Provider;
 
+use League\Uri\Uri;
+
 class UrlData
 {
     /**
@@ -54,6 +56,11 @@ class UrlData
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getUrlWithoutUserInfo(): string
+    {
+        return Uri::createFromString($this->url)->withUserInfo('')->__toString();
     }
 
     public function getEvents(): EventCollection

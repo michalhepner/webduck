@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ae4245fded5b80b9136ee011345e253",
+    "content-hash": "eb1e0248a2fcf1273bbb1405da16ab31",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2652,16 +2652,16 @@
         },
         {
             "name": "siteqa/test",
-            "version": "1.0.2",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/michalhepner/siteqa-test.git",
-                "reference": "8ee9110c3745721d4370daf3da1ee674f34bc020"
+                "reference": "770f04b4b249715182116b6b9993ac6c4f3072b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michalhepner/siteqa-test/zipball/8ee9110c3745721d4370daf3da1ee674f34bc020",
-                "reference": "8ee9110c3745721d4370daf3da1ee674f34bc020",
+                "url": "https://api.github.com/repos/michalhepner/siteqa-test/zipball/770f04b4b249715182116b6b9993ac6c4f3072b8",
+                "reference": "770f04b4b249715182116b6b9993ac6c4f3072b8",
                 "shasum": ""
             },
             "require": {
@@ -2696,10 +2696,10 @@
             ],
             "description": "Package containing tests used by SiteQA",
             "support": {
-                "source": "https://github.com/michalhepner/siteqa-test/tree/1.0.2",
+                "source": "https://github.com/michalhepner/siteqa-test/tree/1.0.4",
                 "issues": "https://github.com/michalhepner/siteqa-test/issues"
             },
-            "time": "2018-08-10T11:58:04+00:00"
+            "time": "2018-08-29T09:27:28+00:00"
         },
         {
             "name": "symfony/cache",

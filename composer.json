@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "enqueue/enqueue-bundle": "^0.8.33",
         "enqueue/job-queue-pack": "^0.8.0",
+        "league/uri": "^5.3",
         "marcj/topsort": "^1.1",
         "nunu-software/parallel-process": "^1.0",
         "ramsey/uuid": "^3.8",

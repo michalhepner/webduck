@@ -44,7 +44,7 @@ class SiteAuditCommand extends AbstractAuditCommand
     {
         $dispatcher = new SymfonyEventDispatcher(new EventDispatcher());
         $dispatcher->addListener(CrawlerUriQueuedEvent::NAME, function ($event) use ($output) {
-            $output->writeln(sprintf('<comment>Queued uri %s</comment>', $event->getUri()->__toString()));
+            $output->writeln(sprintf('<comment>Queued uri %s</comment>', $event->getUri()->withUserInfo('')->__toString()));
         });
 
         /** @var Uri[] $crawlerUrls */
@@ -108,14 +108,14 @@ class SiteAuditCommand extends AbstractAuditCommand
                     /** @var AuditResultCollection $auditResults */
                     $auditResults = call_user_func_array(AuditResultCollection::class.'::merge', $auditResultsArr);
 
-                    $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrl()));
+                    $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrlWithoutUserInfo()));
                     $output->writeln('<comment>------------------------------------------------------------</comment>');
 
-                    $helper = new AuditResultHelper($output, $urlData->getUrl(), $auditResults);
+                    $helper = new AuditResultHelper($output, $urlData->getUrlWithoutUserInfo(), $auditResults);
                     $helper->render();
 
-                    $resultAudits[$urlData->getUrl()] = $auditResults;
-                    $screenshots[$urlData->getUrl()] = $urlData->getScreenshot();
+                    $resultAudits[$urlData->getUrlWithoutUserInfo()] = $auditResults;
+                    $screenshots[$urlData->getUrlWithoutUserInfo()] = $urlData->getScreenshot();
                 }
             })
         ;

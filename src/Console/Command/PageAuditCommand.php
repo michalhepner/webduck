@@ -33,7 +33,7 @@ class PageAuditCommand extends AbstractAuditCommand
         /** @var Uri[] $urls */
         $urls = array_map(Uri::class.'::createFromString', $input->getArgument('url'));
         $providerBin = $this->getContainer()->getParameter('bin.provider');
-        $provider = new DataBundleProvider($providerBin, array_map(function (Uri $uri) { return $uri->__toString(); }, $urls));
+        $provider = new DataBundleProvider($providerBin, array_map(function (Uri $uri) { return $uri->withUserInfo('')->__toString(); }, $urls));
         $provider->setUser($input->getOption('user'));
         $provider->setPassword($input->getOption('password'));
 
@@ -57,14 +57,14 @@ class PageAuditCommand extends AbstractAuditCommand
             /** @var AuditResultCollection $auditResults */
             $auditResults = call_user_func_array(AuditResultCollection::class.'::merge', $auditResultsArr);
 
-            $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrl()));
+            $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrlWithoutUserInfo()));
             $output->writeln('<comment>------------------------------------------------------------</comment>');
 
-            $helper = new AuditResultHelper($output, $urlData->getUrl(), $auditResults);
+            $helper = new AuditResultHelper($output, $urlData->getUrlWithoutUserInfo(), $auditResults);
             $helper->render();
 
-            $resultAudits[$urlData->getUrl()] = $auditResults;
-            $screenshots[$urlData->getUrl()] = $urlData->getScreenshot();
+            $resultAudits[$urlData->getUrlWithoutUserInfo()] = $auditResults;
+            $screenshots[$urlData->getUrlWithoutUserInfo()] = $urlData->getScreenshot();
         }
 
         ksort($resultAudits);

@@ -37,6 +37,10 @@ class SitemapAuditCommand extends AbstractAuditCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $sitemapUrl = Uri::createFromString($input->getArgument('sitemap-url'));
+        if (!empty($input->getOption('user')) && !empty($input->getOption('password'))) {
+            $sitemapUrl = $sitemapUrl->withUserInfo($input->getOption('user'), $input->getOption('password'));
+        }
+
         $sitemapProvider = new SitemapResultProvider(new HttpSuiteProvider(new Client()));
         $sitemap = new Sitemap($sitemapUrl);
         $sitemapResult = $sitemapProvider->provide($sitemap);
@@ -78,14 +82,14 @@ class SitemapAuditCommand extends AbstractAuditCommand
                     /** @var AuditResultCollection $auditResults */
                     $auditResults = call_user_func_array(AuditResultCollection::class.'::merge', $auditResultsArr);
 
-                    $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrl()));
+                    $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrlWithoutUserInfo()));
                     $output->writeln('<comment>------------------------------------------------------------</comment>');
 
                     $helper = new AuditResultHelper($output, $urlData->getUrl(), $auditResults);
                     $helper->render();
 
-                    $resultAudits[$urlData->getUrl()] = $auditResults;
-                    $screenshots[$urlData->getUrl()] = $urlData->getScreenshot();
+                    $resultAudits[$urlData->getUrlWithoutUserInfo()] = $auditResults;
+                    $screenshots[$urlData->getUrlWithoutUserInfo()] = $urlData->getScreenshot();
                 }
             })
         ;
