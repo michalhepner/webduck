@@ -13,7 +13,7 @@ services:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
-    Webduck\Controller\:
+    Webduck\Http\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
