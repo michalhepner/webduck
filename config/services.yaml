@@ -1,5 +1,7 @@
 parameters:
     bin.provider: '%kernel.project_dir%/index.js'
+    url_filters:
+      - '.*\.(pdf|jpg|jpeg|gif|png)'
 
 services:
     _defaults:
@@ -11,7 +13,11 @@ services:
 
     Webduck\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Bus}'
+
+    Webduck\Bus\Handler\:
+        resource: '../src/Bus/Handler'
+        public: true
 
     Webduck\Http\Controller\:
         resource: '../src/Controller'
@@ -21,38 +27,18 @@ services:
         resource: '../src/Console/Command'
         tags: ['console.command']
 
-    audits.default:
-        class: Webduck\Audit\AuditCollection
-        calls:
-            - [ 'add', [ '@audit.console_errors' ] ]
-            - [ 'add', [ '@audit.exception' ] ]
-            - [ 'add', [ '@audit.page_size' ] ]
-            - [ 'add', [ '@audit.resource_load' ] ]
-            - [ 'add', [ '@audit.resource_size' ] ]
-            - [ 'add', [ '@audit.security' ] ]
-            - [ 'add', [ '@audit.violation' ] ]
+    Webduck\Domain\Transformer\:
+        resource: '../src/Domain/Transformer'
         public: true
 
-    audit.console_errors:
-        alias: Webduck\Audit\ConsoleErrorsAudit
+    Webduck\Domain\Provider\BrowseCollectionProvider:
+        class: Webduck\Domain\Provider\BrowseCollectionProvider
+        arguments: [ '%bin.provider%' ]
 
-    audit.exception:
-        alias: Webduck\Audit\ExceptionAudit
+    Webduck\Bus\Handler\AuditSiteHandler:
+        public: true
+        calls: [ [ 'setDefaultUriFilters', [ '%url_filters%' ] ] ]
 
-    audit.page_size:
-        class: Webduck\Audit\PageSizeAudit
-        arguments: [ 5242880 ]
-
-    audit.resource_load:
-        class: Webduck\Audit\ResourceLoadAudit
-        arguments: [ 1000 ]
-
-    audit.resource_size:
-        class: Webduck\Audit\ResourceSizeAudit
-        arguments: [ 1048576 ]
-
-    audit.security:
-        alias: Webduck\Audit\SecurityAudit
-
-    audit.violation:
-        alias: Webduck\Audit\ViolationAudit
+    Webduck\Bus\Handler\AuditSitemapHandler:
+        public: true
+        calls: [ [ 'setDefaultUriFilters', [ '%url_filters%' ] ] ]

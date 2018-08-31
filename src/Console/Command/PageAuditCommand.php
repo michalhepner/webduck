@@ -4,16 +4,11 @@ declare(strict_types = 1);
 
 namespace Webduck\Console\Command;
 
-use Siteqa\Test\Domain\Model\Uri;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webduck\Audit\AuditResultCollection;
-use Webduck\Audit\AuditInterface;
-use Webduck\Console\Helper\AuditResultHelper;
-use Webduck\Provider\DataBundleProvider;
-use Webduck\Provider\UrlData;
+use Webduck\Bus\Command\AuditPageCommand;
+use Webduck\Bus\Handler\AuditPageHandler;
 
 class PageAuditCommand extends AbstractAuditCommand
 {
@@ -24,61 +19,24 @@ class PageAuditCommand extends AbstractAuditCommand
         $this
             ->setName('page:audit')
             ->addArgument('url', InputArgument::IS_ARRAY | InputArgument::REQUIRED)
-            ->addOption('save-html', null, InputOption::VALUE_REQUIRED, 'Where to save the output as HTML.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var Uri[] $urls */
-        $urls = array_map(Uri::class.'::createFromString', $input->getArgument('url'));
-        $providerBin = $this->getContainer()->getParameter('bin.provider');
-        $provider = new DataBundleProvider($providerBin, array_map(function (Uri $uri) { return $uri->withUserInfo('')->__toString(); }, $urls));
-        $provider->setUser($input->getOption('user'));
-        $provider->setPassword($input->getOption('password'));
-
-        $urlDataCollection = $provider->provide()->getUrlDataCollection();
+        $this->attachListeners($output);
 
         $audits = $this->getAudits($input);
+        $command = AuditPageCommand::create($input->getArgument('url'), $audits);
 
-        $resultAudits = [];
-        $screenshots = [];
-
-        $urlIndex = 0;
-        /** @var UrlData $urlData */
-        foreach ($urlDataCollection as $urlData) {
-            $urlIndex++;
-            /** @var AuditInterface $audit */
-            $auditResultsArr = [];
-            foreach ($audits as $audit) {
-                $auditResultsArr[] = $audit->execute($urlData);
-            }
-
-            /** @var AuditResultCollection $auditResults */
-            $auditResults = call_user_func_array(AuditResultCollection::class.'::merge', $auditResultsArr);
-
-            $output->writeln(sprintf('<comment>[%d/%d] %s</comment>', $urlIndex, count($urls), $urlData->getUrlWithoutUserInfo()));
-            $output->writeln('<comment>------------------------------------------------------------</comment>');
-
-            $helper = new AuditResultHelper($output, $urlData->getUrlWithoutUserInfo(), $auditResults);
-            $helper->render();
-
-            $resultAudits[$urlData->getUrlWithoutUserInfo()] = $auditResults;
-            $screenshots[$urlData->getUrlWithoutUserInfo()] = $urlData->getScreenshot();
+        if (!empty($input->getOption('username')) && !empty($input->getOption('password'))) {
+            $command->setUsername($input->getOption('username'));
+            $command->setPassword($input->getOption('password'));
         }
 
-        ksort($resultAudits);
+        $report = $this->getContainer()->get(AuditPageHandler::class)->handle($command);
 
-        if ($htmlPath = $input->getOption('save-html')) {
-            $twig = $this->getContainer()->get('twig');
-            $auditHtml = $twig->render('audit.html.twig', [
-                'site' => $urls[0]->getHost(),
-                'audits' => $resultAudits,
-                'screenshots' => $screenshots,
-            ]);
-
-            file_put_contents($htmlPath, $auditHtml);
-        }
+        $this->outputReport($report, $input, $output);
 
         return 0;
     }

@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Webduck\Console\Helper;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Webduck\Audit\AuditResult;
+use Webduck\Audit\Audit;
 use Webduck\Audit\AuditResultCollection;
 
 class AuditResultHelper
@@ -71,13 +71,13 @@ class AuditResultHelper
     protected function renderText(): void
     {
         $lines = [];
-        /** @var AuditResult $auditResult */
+        /** @var Audit $auditResult */
         foreach ($this->audits as $auditResult) {
             switch ($auditResult->getResolution()) {
-                case AuditResult::RESOLUTION_ERROR:
+                case Audit::RESOLUTION_ERROR:
                     $color = 'red';
                     break;
-                case AuditResult::RESOLUTION_WARNING:
+                case Audit::RESOLUTION_WARNING:
                     $color = 'yellow';
                     break;
                 default:
