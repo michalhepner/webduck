@@ -101,4 +101,9 @@ class UriCollection implements IteratorAggregate, Countable
     {
         uasort($this->items, $cmp);
     }
+
+    public function filter(callable $func)
+    {
+        return new self(array_filter($this->items, $func));
+    }
 }

@@ -64,6 +64,12 @@ class AuditSitemapHandler implements DispatcherAwareInterface
         $browseUris = new UriCollection(array_unique($urls));
         $browseUris = $browseUris->unique();
 
+        foreach ($command->getUriFilters() as $uriFilter) {
+            $browseUris = $browseUris->filter(function (Uri $uri) use ($uriFilter) {
+                return !preg_match('/'.$uriFilter.'/i', $uri->__toString());
+            });
+        }
+
         foreach ($browseUris as $uri) {
             $this->dispatch(UriQueuedEvent::NAME, new UriQueuedEvent($uri));
         }
