@@ -75,7 +75,7 @@ class Insight
 
     public function isMarkError(): bool
     {
-        return $this->mark === self::MARK_WARNING;
+        return $this->mark === self::MARK_ERROR;
     }
 
     public function getMessage(): string
