@@ -93,4 +93,36 @@ class InsightCollection implements IteratorAggregate, Countable
 
         return $obj;
     }
+
+    public function some(callable $func): bool
+    {
+        foreach ($this->items as $item) {
+            if ($func($item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasErrors(): bool
+    {
+        return $this->some(function (Insight $insight) {
+            return $insight->isMarkError();
+        });
+    }
+
+    public function hasWarnings(): bool
+    {
+        return $this->some(function (Insight $insight) {
+            return $insight->isMarkWarning();
+        });
+    }
+
+    public function hasOks(): bool
+    {
+        return $this->some(function (Insight $insight) {
+            return $insight->isMarkOk();
+        });
+    }
 }

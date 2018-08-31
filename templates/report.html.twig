@@ -41,7 +41,15 @@
             {% for page in report.pages %}
                 <li class="my-3">
                     <div class="p-3 bg-light border shadow-sm">
-                        {% if page.insights|length == 0 %}
+                        {% if page.insights.hasErrors %}
+                            <span class="mr-1 btn btn-sm rounded-circle btn-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                        {% elseif page.insights.hasWarnings %}
+                            <span class="mr-1 btn btn-sm rounded-circle btn-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                        {% else %}
                             <span class="mr-1 btn btn-sm rounded-circle btn-success">
                                 <i class="fas fa-check-circle"></i>
                             </span>
