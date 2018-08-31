@@ -90,7 +90,7 @@ class BrowseCollection implements IteratorAggregate, Countable
     public function get(string $url): Browse
     {
         foreach ($this->items as $item) {
-            if ($item->getUrl() === $url) {
+            if ($item->getUri()->__toString() === $url) {
                 return $item;
             }
         }
@@ -101,7 +101,7 @@ class BrowseCollection implements IteratorAggregate, Countable
     public function has(string $url): bool
     {
         foreach ($this->items as $item) {
-            if ($item->getUrl() === $url) {
+            if ($item->getUri()->__toString() === $url) {
                 return true;
             }
         }

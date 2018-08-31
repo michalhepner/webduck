@@ -8,8 +8,6 @@ use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 use Webduck\Bus\AbstractCommand;
 use Webduck\Domain\Audit\AuditCollection;
-use Webduck\Domain\Collection\StringCollection;
-use Webduck\Domain\Collection\UriCollection;
 use Webduck\Domain\Collection\UriFilterCollection;
 use Webduck\Domain\Model\Uri;
 use Webduck\Domain\Model\UriFilter;

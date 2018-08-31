@@ -6,10 +6,8 @@ namespace Webduck\Domain\Collection;
 
 use ArrayIterator;
 use Countable;
-use InvalidArgumentException;
 use IteratorAggregate;
 use Webduck\Domain\Model\Screenshot;
-use Webduck\Domain\Model\Uri;
 
 class ScreenshotCollection implements IteratorAggregate, Countable
 {
@@ -25,63 +23,11 @@ class ScreenshotCollection implements IteratorAggregate, Countable
         }
     }
 
-    /**
-     * @param Screenshot $item
-     *
-     * @return self
-     */
     public function add(Screenshot $item): self
     {
         $this->items[] = $item;
 
         return $this;
-    }
-
-    /**
-     * @param string|Uri $uri
-     *
-     * @return bool
-     */
-    public function hasForUri($uri): bool
-    {
-        if ($uri instanceof Uri) {
-            $uri = $uri->__toString();
-        } elseif(!is_string($uri)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument 0 provided to %s must be a string or an instance of %s',
-                __METHOD__,
-                Uri::class
-            ));
-        }
-
-        foreach ($this->items as $item) {
-            if ($item->getUri()->__toString() == $uri) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function getForUri($uri): ?Screenshot
-    {
-        if ($uri instanceof Uri) {
-            $uri = $uri->__toString();
-        } elseif(!is_string($uri)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument 0 provided to %s must be a string or an instance of %s',
-                __METHOD__,
-                Uri::class
-            ));
-        }
-
-        foreach ($this->items as $item) {
-            if ($item->getUri()->__toString() == $uri) {
-                return $item;
-            }
-        }
-
-        return null;
     }
 
     public function meld(...$collections): self

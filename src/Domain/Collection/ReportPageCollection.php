@@ -68,7 +68,7 @@ class ReportPageCollection implements IteratorAggregate, Countable
     public function get(string $url): ReportPage
     {
         foreach ($this->items as $item) {
-            if ($item->getUrl() === $url) {
+            if ($item->getUri()->__toString() === $url) {
                 return $item;
             }
         }
@@ -79,7 +79,7 @@ class ReportPageCollection implements IteratorAggregate, Countable
     public function has(string $url): bool
     {
         foreach ($this->items as $item) {
-            if ($item->getUrl() === $url) {
+            if ($item->getUri()->__toString() === $url) {
                 return true;
             }
         }
