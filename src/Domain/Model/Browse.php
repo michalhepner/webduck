@@ -56,7 +56,7 @@ class Browse
                 )
             ),
             $data['trace'],
-            array_key_exists('screenshot', $data) ? new Screenshot('image/jpeg', true, $data['screenshot']) : null
+            array_key_exists('screenshot', $data) && $data['screenshot'] ? new Screenshot('image/jpeg', true, $data['screenshot']) : null
         );
     }
 

@@ -37,13 +37,16 @@ module.exports = class {
           await page.tracing.start({ path: trace.name, screenshots: true });
 
           await page.goto(url, { waitUntil : "networkidle2", timeout: 30000 });
-          await page.screenshot({
-            path: screenshot.name,
-            fullPage: true,
-            type: "jpeg",
-            quality: 50,
-            encoding: "base64"
-          });
+
+          if (options.screenshot) {
+            await page.screenshot({
+              path: screenshot.name,
+              fullPage: true,
+              type: "jpeg",
+              quality: 50,
+              encoding: "base64"
+            });
+          }
 
           await cdpEventObserver.stop();
 
@@ -52,7 +55,7 @@ module.exports = class {
           await page.tracing.stop();
 
           crawledUrlOutput.trace = JSON.parse(fs.readFileSync(trace.name, 'utf-8'));
-          crawledUrlOutput.screenshot = fs.readFileSync(screenshot.name, 'utf-8');
+          crawledUrlOutput.screenshot = options.screenshot ? fs.readFileSync(screenshot.name, 'utf-8') : null;
 
           trace.removeCallback();
 

@@ -34,6 +34,8 @@ class PageAuditCommand extends AbstractAuditCommand
             $command->setPassword($input->getOption('password'));
         }
 
+        $command->setShouldGenerateScreenshot((bool) $input->getOption('screenshot'));
+
         $report = $this->getContainer()->get(AuditPageHandler::class)->handle($command);
 
         $this->outputReport($report, $input, $output);

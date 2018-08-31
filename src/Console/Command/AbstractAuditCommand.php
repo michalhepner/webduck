@@ -51,6 +51,7 @@ abstract class AbstractAuditCommand extends ContainerAwareCommand implements Dis
             ->addOption('save-html', null, InputOption::VALUE_REQUIRED, 'Defines where to save the report in HTML format.')
             ->addOption('save-json', null, InputOption::VALUE_REQUIRED, 'Defines where to save the report in JSON format.')
             ->addOption('save-text', null, InputOption::VALUE_REQUIRED, 'Defines where to save the report in text format.')
+            ->addOption('screenshot', null, InputOption::VALUE_NONE, 'Should screenshots be generated in the report (works only for HTML and JSON output)?')
         ;
     }
 

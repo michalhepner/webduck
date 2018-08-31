@@ -37,6 +37,7 @@ class SitemapAuditCommand extends AbstractAuditCommand
         }
 
         $command->setUriFilters($input->getOption('url-filter'));
+        $command->setShouldGenerateScreenshot((bool) $input->getOption('screenshot'));
 
         $report = $this->getContainer()->get(AuditSitemapHandler::class)->handle($command);
 

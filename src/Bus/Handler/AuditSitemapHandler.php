@@ -56,7 +56,7 @@ class AuditSitemapHandler implements DispatcherAwareInterface
         $urls = [];
         /** @var SiteqaUri $uri */
         foreach ($sitemapResult->getUris() as $uri) {
-            $uri = !$uri->hasHost() ? $sitemapUrl->getHost() : $uri;
+            $uri = !$uri->hasHost() ? $uri->withHost($sitemapUrl->getHost()) : $uri;
             $uri = empty($uri->getScheme()) ? $uri->withScheme($sitemapUrl->getScheme()) : $uri;
             $urls[] = $uri->__toString();
         }
@@ -85,7 +85,11 @@ class AuditSitemapHandler implements DispatcherAwareInterface
             }
         };
 
-        $this->browseCollectionProvider->emit($browseUris, $emitCallback);
+        $emitOptions = ['screenshot' => $command->getShouldGenerateScreenshot()];
+        $command->getUsername() && $emitOptions['username'] = $command->getUsername();
+        $command->getPassword() && $emitOptions['password'] = $command->getPassword();
+
+        $this->browseCollectionProvider->emit($browseUris, $emitCallback, $emitOptions);
         $report->getPages()->uasort(function (ReportPage $reportPage1, ReportPage $reportPage2) {
             return strcmp($reportPage1->getUri()->__toString(), $reportPage2->getUri()->__toString());
         });

@@ -144,4 +144,16 @@ class AuditPageCommand extends AbstractCommand
     {
         return $this->username && $this->password;
     }
+
+    public function getShouldGenerateScreenshot(): bool
+    {
+        return $this->shouldGenerateScreenshot;
+    }
+
+    public function setShouldGenerateScreenshot(bool $shouldGenerateScreenshot): self
+    {
+        $this->shouldGenerateScreenshot = $shouldGenerateScreenshot;
+
+        return $this;
+    }
 }

@@ -39,6 +39,7 @@ class SiteAuditCommand extends AbstractAuditCommand
 
         $command->setUriFilters($input->getOption('url-filter'));
         $command->setAllowedHosts($input->getOption('allowed-host'));
+        $command->setShouldGenerateScreenshot((bool) $input->getOption('screenshot'));
 
         $report = $this->getContainer()->get(AuditSiteHandler::class)->handle($command);
 

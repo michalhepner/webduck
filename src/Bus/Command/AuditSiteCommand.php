@@ -234,4 +234,16 @@ class AuditSiteCommand extends AbstractCommand
 
         return $this;
     }
+
+    public function getShouldGenerateScreenshot(): bool
+    {
+        return $this->shouldGenerateScreenshot;
+    }
+
+    public function setShouldGenerateScreenshot(bool $shouldGenerateScreenshot): self
+    {
+        $this->shouldGenerateScreenshot = $shouldGenerateScreenshot;
+
+        return $this;
+    }
 }

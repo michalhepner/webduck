@@ -59,7 +59,11 @@ class AuditPageHandler implements DispatcherAwareInterface
             }
         };
 
-        $this->browseCollectionProvider->emit($browseUris, $emitCallback);
+        $emitOptions = ['screenshot' => $command->getShouldGenerateScreenshot()];
+        $command->getUsername() && $emitOptions['username'] = $command->getUsername();
+        $command->getPassword() && $emitOptions['password'] = $command->getPassword();
+
+        $this->browseCollectionProvider->emit($browseUris, $emitCallback, $emitOptions);
         $report->getPages()->uasort(function (ReportPage $reportPage1, ReportPage $reportPage2) {
             return strcmp($reportPage1->getUri()->__toString(), $reportPage2->getUri()->__toString());
         });

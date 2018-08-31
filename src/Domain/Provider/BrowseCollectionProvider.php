@@ -95,6 +95,7 @@ class BrowseCollectionProvider
             'provide',
             array_key_exists('username', $options) && !empty($options['username']) ? '--username='.escapeshellarg($options['username']) : null,
             array_key_exists('password', $options) && !empty($options['password'])  ? '--password='.escapeshellarg($options['password']) : null,
+            array_key_exists('screenshot', $options) && $options['screenshot'] ? '--screenshot' : null,
             escapeshellarg($uri->__toString())
         ]));
     }
