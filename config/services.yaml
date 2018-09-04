@@ -27,7 +27,7 @@ services:
         public: true
 
     Webduck\Http\Controller\:
-        resource: '../src/Controller'
+        resource: '../src/Http/Controller/*'
         tags: ['controller.service_arguments']
 
     Webduck\Console\Command\:
