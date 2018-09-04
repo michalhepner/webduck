@@ -23,7 +23,7 @@ class BrowseCollectionProvider
     /**
      * @var int
      */
-    protected $poolSize = 5;
+    protected $poolSize = 3;
 
     public function __construct(string $bin, ?int $poolSize = null)
     {

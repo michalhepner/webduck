@@ -2,6 +2,13 @@ parameters:
     bin.provider: '%kernel.project_dir%/index.js'
     url_filters:
       - '.*\.(pdf|jpg|jpeg|gif|png)'
+    env(CHROMIUM_PARALLEL_PROCESSES): 3
+    env(AUDIT_PAGE_SIZE_THRESHOLD): 5242880
+    env(AUDIT_RESOURCE_LOAD_THRESHOLD): 1000
+    env(AUDIT_RESOURCE_SIZE_THRESHOLD): 1048576
+    audit.page_size_threshold: '%env(AUDIT_PAGE_SIZE_THRESHOLD)%'
+    audit.resource_load_threshold: '%env(AUDIT_RESOURCE_LOAD_THRESHOLD)%'
+    audit.resource_size_threshold: '%env(AUDIT_RESOURCE_SIZE_THRESHOLD)%'
 
 services:
     _defaults:
@@ -13,7 +20,7 @@ services:
 
     Webduck\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Bus}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Bus,Console,Domain}'
 
     Webduck\Bus\Handler\:
         resource: '../src/Bus/Handler'
@@ -27,13 +34,49 @@ services:
         resource: '../src/Console/Command'
         tags: ['console.command']
 
+    Webduck\Console\Helper\:
+        resource: '../src/Console/Helper'
+        public: true
+
     Webduck\Domain\Transformer\:
         resource: '../src/Domain/Transformer'
         public: true
 
+    Webduck\Domain\Audit\:
+        resource: '../src/Domain/Audit'
+        public: true
+        exclude: '../src/{AuditCollection.php,AuditInterface.php}'
+
+    Webduck\Domain\Audit\AuditCollection:
+        class: Webduck\Domain\Audit\AuditCollection
+        public: true
+        calls:
+            - [ 'add', [ '@Webduck\Domain\Audit\ConsoleErrorsAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\ExceptionAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\PageSizeAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\ResourceLoadAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\ResourceSizeAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\SecurityAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\ViolationAudit' ] ]
+
+    Webduck\Domain\Audit\PageSizeAudit:
+        class: Webduck\Domain\Audit\PageSizeAudit
+        arguments: [ '%audit.page_size_threshold%' ]
+        public: true
+
+    Webduck\Domain\Audit\ResourceLoadAudit:
+        class: Webduck\Domain\Audit\ResourceLoadAudit
+        arguments: [ '%audit.resource_load_threshold%' ]
+        public: true
+
+    Webduck\Domain\Audit\ResourceSizeAudit:
+        class: Webduck\Domain\Audit\ResourceSizeAudit
+        arguments: [ '%audit.resource_size_threshold%' ]
+        public: true
+
     Webduck\Domain\Provider\BrowseCollectionProvider:
         class: Webduck\Domain\Provider\BrowseCollectionProvider
-        arguments: [ '%bin.provider%' ]
+        arguments: [ '%bin.provider%', '%env(CHROMIUM_PARALLEL_PROCESSES)%' ]
 
     Webduck\Bus\Handler\AuditSiteHandler:
         public: true
