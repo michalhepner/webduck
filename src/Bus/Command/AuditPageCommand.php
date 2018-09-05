@@ -13,6 +13,8 @@ use Webduck\Domain\Model\UriFilter;
 
 class AuditPageCommand extends AbstractCommand
 {
+    const NAME = 'audit.page';
+
     /**
      * @var UriCollection
      */
@@ -155,5 +157,28 @@ class AuditPageCommand extends AbstractCommand
         $this->shouldGenerateScreenshot = $shouldGenerateScreenshot;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'uris' => $this->uris->toArray(),
+            'audits' => serialize($this->audits),
+            'username' => $this->username,
+            'password' => $this->password,
+            'should_generate_screenshot' => $this->shouldGenerateScreenshot,
+        ];
+    }
+
+    public static function fromArray(array $array): self
+    {
+        $obj = new static($array['uuid'], UriCollection::fromArray($array['uris']), unserialize($array['audits']));
+
+        $obj->setUsername($array['username']);
+        $obj->setPassword($array['password']);
+        $obj->setShouldGenerateScreenshot($array['should_generate_screenshot']);
+
+        return $obj;
     }
 }

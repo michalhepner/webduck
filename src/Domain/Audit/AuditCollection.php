@@ -7,8 +7,9 @@ namespace Webduck\Domain\Audit;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Serializable;
 
-class AuditCollection implements IteratorAggregate, Countable
+class AuditCollection implements IteratorAggregate, Countable, Serializable
 {
     /**
      * @var AuditInterface[]
@@ -59,5 +60,15 @@ class AuditCollection implements IteratorAggregate, Countable
     public function count()
     {
         return count($this->items);
+    }
+
+    public function serialize()
+    {
+        return serialize($this->items);
+    }
+
+    public function unserialize($serialized)
+    {
+        $this->items = unserialize($serialized);
     }
 }

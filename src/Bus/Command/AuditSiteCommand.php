@@ -15,6 +15,8 @@ use Webduck\Domain\Model\UriFilter;
 
 class AuditSiteCommand extends AbstractCommand
 {
+    const NAME = 'audit.site';
+
     /**
      * @var UriCollection
      */
@@ -245,5 +247,32 @@ class AuditSiteCommand extends AbstractCommand
         $this->shouldGenerateScreenshot = $shouldGenerateScreenshot;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'uris' => $this->uris->toArray(),
+            'audits' => serialize($this->audits),
+            'allowed_hosts' => $this->allowedHosts->toArray(),
+            'uri_filters' => $this->uriFilters->toArray(),
+            'username' => $this->username,
+            'password' => $this->password,
+            'should_generate_screenshot' => $this->shouldGenerateScreenshot,
+        ];
+    }
+
+    public static function fromArray(array $arr): self
+    {
+        $obj = new static($arr['uuid'], UriCollection::fromArray($arr['uris']), unserialize($arr['audits']));
+
+        $obj->setUsername($arr['username']);
+        $obj->setPassword($arr['password']);
+        $obj->setAllowedHosts(StringCollection::fromArray($arr['allowed_hosts']));
+        $obj->setUriFilters(UriFilterCollection::fromArray($arr['uri_filters']));
+        $obj->setShouldGenerateScreenshot($arr['should_generate_screenshot']);
+
+        return $obj;
     }
 }

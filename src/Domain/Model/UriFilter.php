@@ -25,4 +25,16 @@ class UriFilter
     {
         return $this->regex;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'regex' => $this->regex
+        ];
+    }
+
+    public static function fromArray(array $arr): self
+    {
+        return new static($arr['regex']);
+    }
 }

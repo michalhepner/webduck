@@ -74,6 +74,15 @@
             "ref": "9e937ccb79e08b978f91fb816d4e6d645813113a"
         }
     },
+    "enqueue/dbal": {
+        "version": "0.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "0.8",
+            "ref": "7b05df4d7e97874f719baa645ab8b6aafe203f9b"
+        }
+    },
     "enqueue/enqueue": {
         "version": "0.8.35"
     },

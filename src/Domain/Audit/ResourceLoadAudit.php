@@ -54,4 +54,16 @@ class ResourceLoadAudit implements AuditInterface
 
         return $results;
     }
+
+    public function unserialize($serialized)
+    {
+        $this->threshold = unserialize($serialized)['threshold'];
+    }
+
+    public function serialize()
+    {
+        return serialize([
+            'threshold' => $this->threshold
+        ]);
+    }
 }

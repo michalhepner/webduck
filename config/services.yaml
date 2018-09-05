@@ -26,6 +26,11 @@ services:
         resource: '../src/Bus/Handler'
         public: true
 
+    Webduck\Bus\Processor\:
+        resource: '../src/Bus/Processor'
+        tags:
+            - { name: 'enqueue.client.processor' }
+
     Webduck\Http\Controller\:
         resource: '../src/Http/Controller/*'
         tags: ['controller.service_arguments']
@@ -85,3 +90,11 @@ services:
     Webduck\Bus\Handler\AuditSitemapHandler:
         public: true
         calls: [ [ 'setDefaultUriFilters', [ '%url_filters%' ] ] ]
+
+    Webduck\Domain\Storage\ReportStorage:
+        class: Webduck\Domain\Storage\ReportStorage
+        public: true
+        arguments:
+          - '%kernel.project_dir%/var/reports'
+          - '@Webduck\Domain\Transformer\ReportToJsonTransformer'
+          - '@Webduck\Domain\Transformer\JsonToReportTransformer'

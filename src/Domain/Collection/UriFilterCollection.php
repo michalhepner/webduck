@@ -87,4 +87,24 @@ class UriFilterCollection implements IteratorAggregate, Countable
     {
         return count($this->items);
     }
+
+    public function toArray(): array
+    {
+        return array_map(
+            function (UriFilter $uriFilter) {
+                return serialize($uriFilter);
+            },
+            $this->items
+        );
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(array_map(
+            function (string $uri) {
+                return unserialize($uri);
+            },
+            $array
+        ));
+    }
 }

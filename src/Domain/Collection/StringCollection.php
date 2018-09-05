@@ -100,4 +100,14 @@ class StringCollection implements IteratorAggregate, Countable
     {
         return $this->items;
     }
+
+    public function toArray(): array
+    {
+        return $this->items;
+    }
+
+    public static function fromArray(array $arr): self
+    {
+        return new static($arr);
+    }
 }

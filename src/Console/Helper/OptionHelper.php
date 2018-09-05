@@ -18,6 +18,7 @@ class OptionHelper
     const OPTION_SAVE_JSON = 'save-json';
     const OPTION_SAVE_TEXT = 'save-text';
     const OPTION_SAVE_SCREENSHOT = 'screenshot';
+    const OPTION_ASYNC = 'async';
 
     public static function addAllOptions(Command $command)
     {
@@ -25,10 +26,16 @@ class OptionHelper
         $command->addOption(self::OPTION_AUDIT_RESOURCE_LOAD, null, InputOption::VALUE_NONE);
         $command->addOption(self::OPTION_USERNAME, 'u', InputOption::VALUE_REQUIRED);
         $command->addOption(self::OPTION_PASSWORD, 'p', InputOption::VALUE_REQUIRED);
-        $command->addOption(self::OPTION_OUTPUT, null, InputOption::VALUE_REQUIRED, 'Defines what type of output is expected. Possible values are \'text\' or \'html\'.', ReportOutputHelper::FORMAT_TEXT);
+        static::addOutputOption($command);
         $command->addOption(self::OPTION_SAVE_HTML, null, InputOption::VALUE_REQUIRED, 'Defines where to save the report in HTML format.');
         $command->addOption(self::OPTION_SAVE_JSON, null, InputOption::VALUE_REQUIRED, 'Defines where to save the report in JSON format.');
         $command->addOption(self::OPTION_SAVE_TEXT, null, InputOption::VALUE_REQUIRED, 'Defines where to save the report in text format.');
         $command->addOption(self::OPTION_SAVE_SCREENSHOT, null, InputOption::VALUE_NONE, 'Should screenshots be generated in the report (works only for HTML and JSON output)?');
+        $command->addOption(self::OPTION_ASYNC, null, InputOption::VALUE_NONE, 'Should report be generated in asynchronous mode?');
+    }
+
+    public static function addOutputOption(Command $command)
+    {
+        $command->addOption(self::OPTION_OUTPUT, null, InputOption::VALUE_REQUIRED, 'Defines what type of output is expected. Possible values are \'text\' or \'html\'.', ReportOutputHelper::FORMAT_TEXT);
     }
 }

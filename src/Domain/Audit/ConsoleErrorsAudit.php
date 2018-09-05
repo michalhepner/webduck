@@ -42,4 +42,13 @@ class ConsoleErrorsAudit implements AuditInterface
 
         return $results;
     }
+
+    public function unserialize($serialized)
+    {
+    }
+
+    public function serialize()
+    {
+        return serialize(null);
+    }
 }

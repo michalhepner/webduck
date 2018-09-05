@@ -106,4 +106,24 @@ class UriCollection implements IteratorAggregate, Countable
     {
         return new self(array_filter($this->items, $func));
     }
+
+    public function toArray(): array
+    {
+        return array_map(
+            function (Uri $uri) {
+                return $uri->__toString();
+            },
+            $this->items
+        );
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(array_map(
+            function (string $uri) {
+                return Uri::createFromString($uri);
+            },
+            $array
+        ));
+    }
 }
