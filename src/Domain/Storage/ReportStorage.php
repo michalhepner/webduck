@@ -52,17 +52,26 @@ class ReportStorage
         ;
     }
 
-    public function store(string $uuid, Report $report): void
+    public function remove(string $uuid): void
     {
         $this->ensureDirExists();
 
         $filename = $this->getFilename($uuid);
+
+        file_exists($filename) ? unlink($filename) : null;
+    }
+
+    public function store(Report $report): void
+    {
+        $this->ensureDirExists();
+
+        $filename = $this->getFilename($report->getUuid());
         file_put_contents($filename, gzencode($this->reportToJsonTransformer->transform($report)));
     }
 
     protected function ensureDirExists(): void
     {
-        !$this->dir->isDir() && mkdir($this->dir->getPathname());
+        !$this->dir->isDir() && mkdir($this->dir->getPathname(), 0777, true);
     }
 
     protected function getFilename($uuid): string

@@ -22,6 +22,7 @@ class ReportToJsonTransformer
     public function transform(Report $report, int $options = 0): string
     {
         return json_encode([
+            'uuid' => $report->getUuid(),
             'name' => $report->getName(),
             'pages' => $report->getPages()->map(function (ReportPage $page) {
                 return $this->reportPageToArrayTransformer->transform($page);

@@ -95,6 +95,11 @@ services:
         class: Webduck\Domain\Storage\ReportStorage
         public: true
         arguments:
-          - '%kernel.project_dir%/var/reports'
+          - '%kernel.project_dir%/var/report/data'
           - '@Webduck\Domain\Transformer\ReportToJsonTransformer'
           - '@Webduck\Domain\Transformer\JsonToReportTransformer'
+
+    Webduck\Domain\Storage\ReportRequestStorage:
+        class: Webduck\Domain\Storage\ReportRequestStorage
+        public: true
+        arguments: [ '%kernel.project_dir%/var/report/status' ]

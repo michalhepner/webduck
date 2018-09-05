@@ -21,6 +21,8 @@ use Webduck\Dispatcher\DispatcherAwareTrait;
 use Webduck\Domain\Audit\AuditCollection;
 use Webduck\Domain\Audit\ResourceLoadAudit;
 use Webduck\Domain\Audit\ViolationAudit;
+use Webduck\Domain\Model\ReportRequest;
+use Webduck\Domain\Storage\ReportRequestStorage;
 use Webduck\Domain\Transformer\ReportPageToConsoleOutputTransformer;
 
 class AuditSitemapCommand extends ContainerAwareCommand implements DispatcherAwareInterface
@@ -68,6 +70,7 @@ class AuditSitemapCommand extends ContainerAwareCommand implements DispatcherAwa
             /** @var ProducerInterface $producer */
             $producer = $this->getContainer()->get(ProducerInterface::class);
             $producer->sendCommand(AuditSitemapProcessor::getSubscribedCommand(), $command->toArray());
+            $container->get(ReportRequestStorage::class)->store(ReportRequest::create($command->getUuid()));
             $output->writeln($command->getUuid());
         } else {
             $report = $container->get(AuditSitemapHandler::class)->handle($command);

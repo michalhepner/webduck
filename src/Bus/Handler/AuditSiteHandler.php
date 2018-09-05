@@ -83,9 +83,9 @@ class AuditSiteHandler implements DispatcherAwareInterface
 
         $browseUris = $browseUris->unique();
 
-        $report = new Report(sprintf('Site report for: %s', implode(', ', $allowedHosts->getArrayCopy())));
+        $report = new Report($command->getUuid(), sprintf('Site report for: %s', implode(', ', $allowedHosts->getArrayCopy())));
 
-        $emitCallback = function (BrowseCollection $browses) use ($command, $report) {
+        $emitCallback = function (BrowseCollection $browses) use ($command, $report, $browseUris) {
             /** @var Browse $browse */
             foreach ($browses as $browse) {
                 $insightsCollections = [];
@@ -95,7 +95,7 @@ class AuditSiteHandler implements DispatcherAwareInterface
                 }
 
                 $reportPage = new ReportPage($browse->getUri(), InsightCollection::merge(...$insightsCollections), $browse->getScreenshot());
-                $this->dispatch(ReportPageEmittedEvent::NAME, new ReportPageEmittedEvent($reportPage));
+                $this->dispatch(ReportPageEmittedEvent::NAME, new ReportPageEmittedEvent($reportPage, $browseUris));
                 $report->addPage($reportPage);
             }
         };

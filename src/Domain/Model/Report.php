@@ -5,10 +5,16 @@ declare(strict_types = 1);
 namespace Webduck\Domain\Model;
 
 use InvalidArgumentException;
+use Ramsey\Uuid\Uuid;
 use Webduck\Domain\Collection\ReportPageCollection;
 
 class Report
 {
+    /**
+     * @var string
+     */
+    protected $uuid;
+
     /**
      * @var string
      */
@@ -20,13 +26,31 @@ class Report
     protected $pages;
 
     /**
+     * @param string                            $uuid
      * @param string                            $name
      * @param ReportPage[]|ReportPageCollection $pages
      */
-    public function __construct(string $name, $pages = [])
+    public function __construct(string $uuid, string $name, $pages = [])
     {
+        $this->uuid = $uuid;
         $this->name = $name;
         $this->setPages($pages);
+    }
+
+    /**
+     * @param string                            $name
+     * @param ReportPage[]|ReportPageCollection $pages
+     *
+     * @return self
+     */
+    public static function create(string $name, $pages = []): self
+    {
+        return new static(Uuid::uuid4()->toString(), $name, $pages);
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
     }
 
     public function getName(): string

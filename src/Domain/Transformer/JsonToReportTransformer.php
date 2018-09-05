@@ -16,6 +16,7 @@ class JsonToReportTransformer
         $data = json_decode($json, true);
 
         return new Report(
+            $data['uuid'],
             $data['name'],
             array_map(
                 function (array $arr) {
