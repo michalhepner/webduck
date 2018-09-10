@@ -6,9 +6,19 @@ parameters:
     env(AUDIT_PAGE_SIZE_THRESHOLD): 5242880
     env(AUDIT_RESOURCE_LOAD_THRESHOLD): 1000
     env(AUDIT_RESOURCE_SIZE_THRESHOLD): 1048576
+    env(AUDIT_NETWORK_CALL_THRESHOLD): 75
+    env(AUDIT_NETWORK_IMAGE_CALL_THRESHOLD): 50
+    env(AUDIT_NETWORK_SCRIPT_CALL_THRESHOLD): 20
+    env(AUDIT_NETWORK_STYLESHEET_CALL_THRESHOLD): 10
+    env(AUDIT_NETWORK_FONT_CALL_THRESHOLD): 4
     audit.page_size_threshold: '%env(AUDIT_PAGE_SIZE_THRESHOLD)%'
     audit.resource_load_threshold: '%env(AUDIT_RESOURCE_LOAD_THRESHOLD)%'
     audit.resource_size_threshold: '%env(AUDIT_RESOURCE_SIZE_THRESHOLD)%'
+    audit.network_call_threshold: '%env(AUDIT_NETWORK_CALL_THRESHOLD)%'
+    audit.network_image_call_threshold: '%env(AUDIT_NETWORK_IMAGE_CALL_THRESHOLD)%'
+    audit.network_script_call_threshold: '%env(AUDIT_NETWORK_SCRIPT_CALL_THRESHOLD)%'
+    audit.network_stylesheet_threshold: '%env(AUDIT_NETWORK_STYLESHEET_CALL_THRESHOLD)%'
+    audit.network_font_threshold: '%env(AUDIT_NETWORK_FONT_CALL_THRESHOLD)%'
 
 services:
     _defaults:
@@ -63,6 +73,7 @@ services:
             - [ 'add', [ '@Webduck\Domain\Audit\ResourceSizeAudit' ] ]
             - [ 'add', [ '@Webduck\Domain\Audit\SecurityAudit' ] ]
             - [ 'add', [ '@Webduck\Domain\Audit\ViolationAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\NetworkAudit' ]]
 
     Webduck\Domain\Audit\PageSizeAudit:
         class: Webduck\Domain\Audit\PageSizeAudit
@@ -72,6 +83,17 @@ services:
     Webduck\Domain\Audit\ResourceLoadAudit:
         class: Webduck\Domain\Audit\ResourceLoadAudit
         arguments: [ '%audit.resource_load_threshold%' ]
+        public: true
+
+    Webduck\Domain\Audit\NetworkAudit:
+        class: Webduck\Domain\Audit\NetworkAudit
+        arguments:
+            - '%audit.network_call_threshold%'
+            - '%audit.network_image_call_threshold%'
+            - '%audit.network_script_call_threshold%'
+            - '%audit.network_stylesheet_threshold%'
+            - '%audit.network_font_threshold%'
+
         public: true
 
     Webduck\Domain\Audit\ResourceSizeAudit:
