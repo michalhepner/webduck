@@ -41,10 +41,6 @@ services:
         tags:
             - { name: 'enqueue.client.processor' }
 
-    Webduck\Http\Controller\:
-        resource: '../src/Http/Controller/*'
-        tags: ['controller.service_arguments']
-
     Webduck\Console\Command\:
         resource: '../src/Console/Command'
         tags: ['console.command']
