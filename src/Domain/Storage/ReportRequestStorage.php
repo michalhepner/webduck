@@ -4,7 +4,9 @@ declare(strict_types = 1);
 
 namespace Webduck\Domain\Storage;
 
+use FilesystemIterator;
 use SplFileInfo;
+use Webduck\Domain\Collection\ReportRequestCollection;
 use Webduck\Domain\Model\ReportRequest;
 
 class ReportRequestStorage
@@ -36,6 +38,23 @@ class ReportRequestStorage
             ReportRequest::fromArray(json_decode(file_get_contents($filename), true)) :
             null
         ;
+    }
+
+    public function index(): ReportRequestCollection
+    {
+        $this->ensureDirExists();
+
+        $collection = new ReportRequestCollection();
+
+        /** @var SplFileInfo $file */
+        foreach (new FilesystemIterator($this->dir->getPathname()) as $file) {
+            if (preg_match('/\.json$/', $file->getFilename())) {
+                $uuid = preg_replace('/\.json$/', '', $file->getFilename());
+                $collection->add($this->get($uuid));
+            }
+        }
+
+        return $collection;
     }
 
     public function store(ReportRequest $reportRequest): void
