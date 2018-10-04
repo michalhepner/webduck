@@ -1,7 +1,6 @@
 parameters:
-    bin.provider: '%kernel.project_dir%/index.js'
-    url_filters:
-      - '.*\.(pdf|jpg|jpeg|gif|png)'
+    env(JAVA_BIN): 'java'
+    env(VNU_JAR): '%kernel.project_dir%/bin/vnu/vnu.jar'
     env(CHROMIUM_PARALLEL_PROCESSES): 3
     env(AUDIT_PAGE_SIZE_THRESHOLD): 5242880
     env(AUDIT_RESOURCE_LOAD_THRESHOLD): 1000
@@ -11,6 +10,15 @@ parameters:
     env(AUDIT_NETWORK_SCRIPT_CALL_THRESHOLD): 20
     env(AUDIT_NETWORK_STYLESHEET_CALL_THRESHOLD): 10
     env(AUDIT_NETWORK_FONT_CALL_THRESHOLD): 4
+
+    bin.provider: '%kernel.project_dir%/index.js'
+    bin.vnu: '%env(VNU_JAR)%'
+    bin.java: '%env(JAVA_BIN)%'
+    kernel.tmp_dir: '%kernel.project_dir%/var/tmp/%kernel.environment%'
+
+    url_filters:
+      - '.*\.(pdf|jpg|jpeg|gif|png)'
+
     audit.page_size_threshold: '%env(AUDIT_PAGE_SIZE_THRESHOLD)%'
     audit.resource_load_threshold: '%env(AUDIT_RESOURCE_LOAD_THRESHOLD)%'
     audit.resource_size_threshold: '%env(AUDIT_RESOURCE_SIZE_THRESHOLD)%'
@@ -64,6 +72,7 @@ services:
         calls:
             - [ 'add', [ '@Webduck\Domain\Audit\ConsoleErrorsAudit' ] ]
             - [ 'add', [ '@Webduck\Domain\Audit\ExceptionAudit' ] ]
+            - [ 'add', [ '@Webduck\Domain\Audit\HtmlAudit' ] ]
             - [ 'add', [ '@Webduck\Domain\Audit\PageSizeAudit' ] ]
             - [ 'add', [ '@Webduck\Domain\Audit\ResourceLoadAudit' ] ]
             - [ 'add', [ '@Webduck\Domain\Audit\ResourceSizeAudit' ] ]
@@ -89,7 +98,14 @@ services:
             - '%audit.network_script_call_threshold%'
             - '%audit.network_stylesheet_threshold%'
             - '%audit.network_font_threshold%'
+        public: true
 
+    Webduck\Domain\Audit\HtmlAudit:
+        class: Webduck\Domain\Audit\HtmlAudit
+        arguments:
+            - '%bin.vnu%'
+            - '%kernel.tmp_dir%'
+            - '%bin.java%'
         public: true
 
     Webduck\Domain\Audit\ResourceSizeAudit:

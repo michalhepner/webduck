@@ -18,6 +18,7 @@ use Webduck\Console\Subscriber\AuditEventsSubscriber;
 use Webduck\Dispatcher\DispatcherAwareInterface;
 use Webduck\Dispatcher\DispatcherAwareTrait;
 use Webduck\Domain\Audit\AuditCollection;
+use Webduck\Domain\Audit\HtmlAudit;
 use Webduck\Domain\Audit\ResourceLoadAudit;
 use Webduck\Domain\Audit\ViolationAudit;
 use Webduck\Domain\Model\ReportRequest;
@@ -53,6 +54,7 @@ class AuditPageCommand extends ContainerAwareCommand implements DispatcherAwareI
         $audits = $container->get(AuditCollection::class)->excludeMultiple(array_filter([
             !$input->getOption(OptionHelper::OPTION_AUDIT_RESOURCE_LOAD) ? ResourceLoadAudit::NAME : null,
             !$input->getOption(OptionHelper::OPTION_AUDIT_VIOLATIONS) ? ViolationAudit::NAME : null,
+            !$input->getOption(OptionHelper::OPTION_AUDIT_HTML) ? HtmlAudit::NAME : null,
         ]));
 
         $command = BusAuditPageCommand::create($input->getArgument('url'), $audits);

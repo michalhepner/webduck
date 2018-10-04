@@ -56,6 +56,7 @@ module.exports = class {
 
           crawledUrlOutput.trace = JSON.parse(fs.readFileSync(trace.name, 'utf-8'));
           crawledUrlOutput.screenshot = options.screenshot ? fs.readFileSync(screenshot.name, 'utf-8') : null;
+          crawledUrlOutput.html = await page.content();
 
           trace.removeCallback();
 

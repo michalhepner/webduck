@@ -25,6 +25,11 @@ class Browse
     protected $trace;
 
     /**
+     * @var string
+     */
+    protected $html;
+
+    /**
      * @var Screenshot
      */
     protected $screenshot;
@@ -32,15 +37,17 @@ class Browse
     /**
      * @param string|Uri $uri
      * @param BrowseEventCollection $events
+     * @param string $html
      * @param array $trace
      * @param null|Screenshot $screenshot
      */
-    public function __construct($uri, BrowseEventCollection $events, array $trace, ?Screenshot $screenshot = null)
+    public function __construct($uri, BrowseEventCollection $events, array $trace, string $html, ?Screenshot $screenshot = null)
     {
         $this->setUri($uri);
         $this->events = $events;
         $this->trace = $trace;
         $this->screenshot = $screenshot;
+        $this->html = $html;
     }
 
     public static function createFromArray(string $uri, array $data): self
@@ -56,6 +63,7 @@ class Browse
                 )
             ),
             $data['trace'],
+            $data['html'],
             array_key_exists('screenshot', $data) && $data['screenshot'] ? new Screenshot('image/jpeg', true, $data['screenshot']) : null
         );
     }
@@ -119,6 +127,18 @@ class Browse
     public function setScreenshot(Screenshot $screenshot): self
     {
         $this->screenshot = $screenshot;
+
+        return $this;
+    }
+
+    public function getHtml(): string
+    {
+        return $this->html;
+    }
+
+    public function setHtml(string $html): self
+    {
+        $this->html = $html;
 
         return $this;
     }

@@ -56,9 +56,11 @@
             "assets:install --low-level %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
+            "Webduck\\Composer\\InstallVnu::execute",
             "@auto-scripts"
         ],
         "post-update-cmd": [
+            "Webduck\\Composer\\InstallVnu::execute",
             "@auto-scripts"
         ]
     },

@@ -4,6 +4,14 @@ An application to test frontend site problems.
 
 ## Getting Started
 
+### Requirements
+
+1. `PHP` >=7.2 installed
+2. `Composer` installed
+3. `Java 8` or higher installed
+4. `NPM` installed
+5. `unzip` and `wget` installed
+
 ### Installing
 
 1. Clone the project repository.

@@ -11,6 +11,7 @@ class OptionHelper
 {
     const OPTION_AUDIT_VIOLATIONS = 'audit-violations';
     const OPTION_AUDIT_RESOURCE_LOAD = 'audit-resource-load';
+    const OPTION_AUDIT_HTML = 'audit-html';
     const OPTION_USERNAME = 'username';
     const OPTION_PASSWORD = 'password';
     const OPTION_OUTPUT = 'output';
@@ -24,6 +25,7 @@ class OptionHelper
     {
         $command->addOption(self::OPTION_AUDIT_VIOLATIONS, null, InputOption::VALUE_NONE);
         $command->addOption(self::OPTION_AUDIT_RESOURCE_LOAD, null, InputOption::VALUE_NONE);
+        $command->addOption(self::OPTION_AUDIT_HTML, null, InputOption::VALUE_NONE);
         $command->addOption(self::OPTION_USERNAME, 'u', InputOption::VALUE_REQUIRED);
         $command->addOption(self::OPTION_PASSWORD, 'p', InputOption::VALUE_REQUIRED);
         static::addOutputOption($command);
