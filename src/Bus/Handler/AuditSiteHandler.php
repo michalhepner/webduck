@@ -10,41 +10,58 @@ use Siteqa\Test\Provider\CrawlerResultProvider;
 use Siteqa\Test\Provider\HttpSuiteProvider;
 use Siteqa\Test\Domain\Model\Uri as SiteqaUri;
 use Webduck\Bus\Command\AuditSiteCommand;
-use Webduck\Bus\Event\ReportPageEmittedEvent;
 use Webduck\Bus\Event\UriQueuedEvent;
-use Webduck\Dispatcher\DispatcherAwareInterface;
-use Webduck\Dispatcher\DispatcherAwareTrait;
-use Webduck\Domain\Audit\AuditInterface;
-use Webduck\Domain\Collection\BrowseCollection;
-use Webduck\Domain\Collection\InsightCollection;
+use Webduck\Domain\Collection\StringCollection;
 use Webduck\Domain\Collection\UriCollection;
-use Webduck\Domain\Model\Browse;
 use Webduck\Domain\Model\Report;
-use Webduck\Domain\Model\ReportPage;
 use Webduck\Domain\Model\Uri;
-use Webduck\Domain\Provider\BrowseCollectionProvider;
 
-class AuditSiteHandler implements DispatcherAwareInterface
+class AuditSiteHandler extends AbstractAuditHandler
 {
-    use DispatcherAwareTrait;
-
-    /**
-     * @var BrowseCollectionProvider
-     */
-    protected $browseCollectionProvider;
-
     /**
      * @var string[]
      */
-    protected $defaultUriFilters;
-
-    public function __construct(BrowseCollectionProvider $browseCollectionProvider)
-    {
-        $this->browseCollectionProvider = $browseCollectionProvider;
-        $this->defaultUriFilters = [];
-    }
+    protected $defaultUriFilters = [];
 
     public function handle(AuditSiteCommand $command): Report
+    {
+        $browseUris = $this->getUris($command);
+
+        $allHosts = (new StringCollection($browseUris->map(function (Uri $uri) {
+            return $uri->getHost();
+        })));
+
+        $allowedHosts = $allHosts->unique()->getArrayCopy();
+
+        return $this->prepareReport(
+            $command->getUuid(),
+            sprintf('Site report for: %s', implode(', ', $allowedHosts)),
+            $browseUris,
+            $command->getAudits(),
+            $command->getShouldGenerateScreenshot(),
+            $command->getUsername(),
+            $command->getPassword()
+        );
+    }
+
+    public function addDefaultUriFilter(string $defaultUriFilter): self
+    {
+        $this->defaultUriFilters[] = $defaultUriFilter;
+
+        return $this;
+    }
+
+    public function setDefaultUriFilters(array $defaultUriFilters): self
+    {
+        $this->defaultUriFilters = [];
+        foreach ($defaultUriFilters as $defaultUriFilter) {
+            $this->addDefaultUriFilter($defaultUriFilter);
+        }
+
+        return $this;
+    }
+
+    protected function getUris(AuditSiteCommand $command): UriCollection
     {
         $crawlerUris = $command->getUris();
 
@@ -81,52 +98,7 @@ class AuditSiteHandler implements DispatcherAwareInterface
             $browseUris->add($httpSuite->getUri()->__toString());
         }
 
-        $browseUris = $browseUris->unique();
-
-        $report = new Report($command->getUuid(), sprintf('Site report for: %s', implode(', ', $allowedHosts->getArrayCopy())));
-
-        $emitCallback = function (BrowseCollection $browses) use ($command, $report, $browseUris) {
-            /** @var Browse $browse */
-            foreach ($browses as $browse) {
-                $insightsCollections = [];
-                /** @var AuditInterface $audit */
-                foreach ($command->getAudits() as $audit) {
-                    $insightsCollections[] = $audit->execute($browse);
-                }
-
-                $reportPage = new ReportPage($browse->getUri(), InsightCollection::merge(...$insightsCollections), $browse->getScreenshot());
-                $this->dispatch(ReportPageEmittedEvent::NAME, new ReportPageEmittedEvent($reportPage, $browseUris));
-                $report->addPage($reportPage);
-            }
-        };
-
-        $emitOptions = ['screenshot' => $command->getShouldGenerateScreenshot()];
-        $command->getUsername() && $emitOptions['username'] = $command->getUsername();
-        $command->getPassword() && $emitOptions['password'] = $command->getPassword();
-
-        $this->browseCollectionProvider->emit($browseUris, $emitCallback, $emitOptions);
-        $report->getPages()->uasort(function (ReportPage $reportPage1, ReportPage $reportPage2) {
-            return strcmp($reportPage1->getUri()->__toString(), $reportPage2->getUri()->__toString());
-        });
-
-        return $report;
-    }
-
-    public function addDefaultUriFilter(string $defaultUriFilter): self
-    {
-        $this->defaultUriFilters[] = $defaultUriFilter;
-
-        return $this;
-    }
-
-    public function setDefaultUriFilters(array $defaultUriFilters): self
-    {
-        $this->defaultUriFilters = [];
-        foreach ($defaultUriFilters as $defaultUriFilter) {
-            $this->addDefaultUriFilter($defaultUriFilter);
-        }
-
-        return $this;
+        return $browseUris->unique();
     }
 
     protected function getCrawler(): CrawlerResultProvider
