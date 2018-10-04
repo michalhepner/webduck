@@ -17,7 +17,8 @@ parameters:
     kernel.tmp_dir: '%kernel.project_dir%/var/tmp/%kernel.environment%'
 
     url_filters:
-      - '.*\.(pdf|jpg|jpeg|gif|png)'
+      - '.*\.(pdf|jpg|jpeg|gif|png|svg)'
+      - '.*\.(mp4|3gp|avi|flv|m4v|mpeg|mov|wmv|webm)'
 
     audit.page_size_threshold: '%env(AUDIT_PAGE_SIZE_THRESHOLD)%'
     audit.resource_load_threshold: '%env(AUDIT_RESOURCE_LOAD_THRESHOLD)%'
