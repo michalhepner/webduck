@@ -67,6 +67,9 @@ module.exports = class {
       await browser.close();
 
       process.stdout.write(JSON.stringify(output));
-    })();
+    })().catch(error => {
+      process.stderr.write(error.message);
+      process.exit(1);
+    });
   }
 };
